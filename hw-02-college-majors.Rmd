@@ -139,6 +139,13 @@ college_recent_grads %>%
 
 1.  Using what you've learned so far, arrange the data in descending order with respect to proportion of women in a major, and display only the major, the total number of people with major, and proportion of women. Show only the top 3 majors by adding `top_n(3)` at the end of the pipeline.
 
+```{r}
+college_recent_grads %>%
+  arrange(desc(sharewomen)) %>%
+  select(major, total, sharewomen) %>%
+  top_n(3)
+```
+  
 ## How do the distributions of median income compare across major categories?
 
 ```{marginfigure}
@@ -149,6 +156,8 @@ There are three types of incomes reported in this data frame: `p25th`, `median`,
 These correspond to the 25th, 50th, and 75th percentiles of the income distribution of sampled individuals for a given major.
 
 2.  Why do we often choose the median, rather than the mean, to describe the typical income of a group of people?
+
+***We do this because often because the median doesn't take lower or upper extremes into account like the mean does, which will give us a more accurate picture of the data using the median.***
 
 The question we want to answer "How do the distributions of median income compare across major categories?".
 We need to do a few things to answer this question: First, we need to group the data by `major_category`.
@@ -163,7 +172,7 @@ Let's start simple and take a look at the distribution of all median incomes, wi
 
 ```{r fig,height=2}
 ggplot(data = college_recent_grads, mapping = aes(x = median)) +
-  geom_histogram()
+  geom_histogram(binwidth = 5000)
 ```
 
 Along with the plot, we get a message:
@@ -175,6 +184,9 @@ It's good practice to always think in the context of the data and try out a few 
 You might ask yourself: "What would be a meaningful difference in median incomes?" \$1 is obviously too little, \$10000 might be too high.
 
 3.  Try binwidths of \$1000 and \$5000 and choose one. Explain your reasoning for your choice. Note that the binwidth is an argument for the `geom_histogram` function. So to specify a binwidth of \$1000, you would use `geom_histogram(binwidth = 1000)`.
+
+
+I choose a binwidth of 5000 because it gives the viewer enough detail without being overly complex to interpret. Also, using a binwidth of 1000 caused the median income to read with scientific notation which is even harder to read.  
 
 We can also calculate summary statistics for this distribution using the `summarise` function:
 
@@ -188,10 +200,17 @@ college_recent_grads %>%
 ```
 
 4.  Based on the shape of the histogram you created in the previous exercise, determine which of these summary statistics is useful for describing the distribution.
-    Write up your description (remember shape, center, spread, any unusual observations) and include the summary statistic output as well.
+
+   ***The distribution is positively skewed with a sharp incline from the start and then proceeding into a less but still sharp decline over the back half. The center of the data is the median right at 36,000. The spread goes from 22,000 to 110,000, but most of distribution is less than 60,000. The most unusual observation is the median job income at 110,000 because it is isolated from the rest of the data. I think the best summary statistic to use is the median because it describes the experience of the majority of college graduates. The output of the median is 36,000.***
 
 5.  Plot the distribution of `median` income using a histogram, faceted by `major_category`.
     Use the `binwidth` you chose in the earlier exercise.
+    
+```{r fig2, height=2}
+ggplot(data = college_recent_grads, mapping = aes(x = median, fill = major_category)) +
+  geom_histogram(binwidth = 5000)
+```
+
 
 Now that we've seen the shapes of the distributions of median incomes for each major category, we should have a better idea for which summary statistic to use to quantify the typical median income.
 
